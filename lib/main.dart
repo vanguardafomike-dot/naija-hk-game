@@ -34,21 +34,23 @@ class NaijaHKApp extends StatelessWidget {
         title: 'Naija HK Hustle Kingdom',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primaryColor: const Color(0xFF008751),
-          scaffoldBackgroundColor: Colors.white,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF008751),
-          ),
+          primarySwatch: Colors.green,
+          scaffoldBackgroundColor: Colors.black,
           appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xFF008751),
+            backgroundColor: Colors.black,
             foregroundColor: Colors.white,
           ),
+          useMaterial3: true,
         ),
         initialRoute: '/',
         routes: {
-          '/': (context) => const OnboardingScreen(),
+          '/': (context) => const AuthWrapper(),
+          '/onboarding': (context) => const OnboardingScreen(),
           '/login': (context) => const LoginScreen(),
-          '/home': (context) => const MainNavigation(),
+          '/home': (context) => const HomeScreen(),
+          '/wallet': (context) => const WalletScreen(),
+          '/tasks': (context) => const TasksScreen(),
+          '/profile': (context) => const ProfileScreen(),
           '/admin': (context) => const AdminDashboard(),
         },
       ),
@@ -56,38 +58,28 @@ class NaijaHKApp extends StatelessWidget {
   }
 }
 
-class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
-  @override
-  State<MainNavigation> createState() => _MainNavigationState();
-}
-
-class _MainNavigationState extends State<MainNavigation> {
-  int _currentIndex = 0;
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    TasksScreen(),
-    WalletScreen(),
-    ProfileScreen(),
-  ];
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF008751),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Hustle'),
-          BottomNavigationBarItem(icon: Icon(Icons.task), label: 'Tasks'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'Wallet'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
+    final authService = Provider.of<AuthService>(context);
+    return StreamBuilder(
+      stream: authService.authStateChanges,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            backgroundColor: Colors.black,
+            body: Center(
+              child: CircularProgressIndicator(color: Colors.green),
+            ),
+          );
+        }
+        if (snapshot.hasData) {
+          return const HomeScreen();
+        }
+        return const OnboardingScreen();
+      },
     );
   }
 }
