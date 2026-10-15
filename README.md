@@ -1,2 +1,2 @@
-# -naija-hk-game-
+# naija-hk-game
  Naija HK Hustle Kingdom 
