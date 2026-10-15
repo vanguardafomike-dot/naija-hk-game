@@ -11,7 +11,6 @@ import 'screens/wallet_screen.dart';
 import 'screens/tasks_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/admin_screen.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
